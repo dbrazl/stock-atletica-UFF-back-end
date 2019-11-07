@@ -5,25 +5,25 @@ import authConfig from '../../config/auth';
 
 class SessionController {
   async store(req, res) {
-    const { email, password } = req.body;
+    const { username, password } = req.body;
 
     /**
      * Verify if the user exist
      */
-    const user = await User.findOne({ where: { email } });
+    const user = await User.findOne({ where: { username } });
 
     if (!user) {
-      return res.status(401).json({ error: 'User not exist.' });
+      return res.status(401).json({ error: 'Usuário não existe' });
     }
 
     /**
      * Check password
      */
     if (!(await user.checkPassword(password))) {
-      return res.status(401).json({ error: 'Password does not match.' });
+      return res.status(401).json({ error: 'A senha não bate' });
     }
 
-    const { id, name, personality, cellphone, avatar_id } = user;
+    const { id, name, email, personality, cellphone, avatar_id } = user;
 
     /**
      * Find url of user avatar if it exist
@@ -38,6 +38,7 @@ class SessionController {
     return res.json({
       user: {
         id,
+        username,
         name,
         email,
         personality,

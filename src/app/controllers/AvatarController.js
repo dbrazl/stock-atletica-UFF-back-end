@@ -22,14 +22,14 @@ class AvatarController {
     ];
 
     if (!allowedMimes.includes(type)) {
-      res.status(400).json({ error: 'Invalid file type' });
+      res.status(400).json({ error: 'Arquivo de tipo inválido' });
     }
 
     /**
-     * Verify if the size of image is less or equal 5 MB
+     * Verify if the size of image is less than 5 MB
      */
     if (size > 5 * 1024 * 1024) {
-      res.status(400).json({ error: 'File is to larger' });
+      res.status(400).json({ error: 'Arquivo é muito grande' });
     }
 
     /**
@@ -66,7 +66,7 @@ class AvatarController {
 
     await File.destroy({ where: { path } });
 
-    return res.json({ sucess: 'File has been delete' });
+    return res.json({ sucess: 'Arquivo foi deletado' });
   }
 }
 

@@ -6,6 +6,7 @@ export default async (req, res, next) => {
      * Schema validation
      */
     const schema = Yup.object().shape({
+      username: Yup.string().required(),
       name: Yup.string().required(),
       email: Yup.string()
         .email()

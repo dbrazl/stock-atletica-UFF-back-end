@@ -6,23 +6,31 @@ class UserController {
     /**
      * Verify if the user exist in DB
      */
-    const userExist = await User.findOne({ where: { email: req.body.email } });
+    const userExist = await User.findOne({
+      where: { username: req.body.username },
+    });
     if (userExist) {
-      return res.status(401).json({ error: 'User already exists.' });
+      return res.status(401).json({ error: 'Usuário já existe' });
     }
 
     /**
      * Create user in DB
      */
-    const { id, name, email, personality, cellphone } = await User.create(
-      req.body
-    );
+    const {
+      id,
+      username,
+      name,
+      email,
+      personality,
+      cellphone,
+    } = await User.create(req.body);
 
     /**
      * Return user
      */
     return res.json({
       id,
+      username,
       name,
       email,
       personality,
@@ -31,9 +39,20 @@ class UserController {
   }
 
   async update(req, res) {
-    const { email, oldPassword } = req.body;
+    const { username, email, oldPassword } = req.body;
 
     const user = await User.findByPk(req.userId);
+
+    /**
+     * Verify change in user username and if it's available
+     */
+    if (username !== user.username) {
+      const userExist = await User.findOne({ where: { username } });
+
+      if (userExist) {
+        return res.status(401).json({ error: 'Usuário já existe' });
+      }
+    }
 
     /**
      * Verify change in user email and if it's available
@@ -42,7 +61,7 @@ class UserController {
       const userExist = await User.findOne({ where: { email } });
 
       if (userExist) {
-        return res.status(401).json({ error: 'User already exist.' });
+        return res.status(401).json({ error: 'E-mail já utilizado' });
       }
     }
 
@@ -50,13 +69,15 @@ class UserController {
      * Verify if the old password is correct
      */
     if (oldPassword && !(await user.checkPassword(oldPassword))) {
-      return res.status(401).json({ error: 'Old password is not match.' });
+      return res.status(401).json({ error: 'A senha antiga não bate' });
     }
 
     /**
      * Update user in DB
      */
-    const { id, name, avatar_id, cellphone } = await user.update(req.body);
+    const { id, name, avatar_id, cellphone, personality } = await user.update(
+      req.body
+    );
 
     /**
      * Find url of avatar if it files
@@ -70,9 +91,11 @@ class UserController {
      */
     return res.json({
       id,
+      username,
       name,
       email,
       cellphone,
+      personality,
       avatar: { avatar_id, url },
     });
   }
@@ -83,7 +106,7 @@ class UserController {
     files.map(file => File.destroy({ where: { path: file.path } }));
     await User.destroy({ where: { id: req.userId } });
 
-    res.json({ sucess: 'Account has been deleted' });
+    res.json({ sucess: 'A conta foi deletada' });
   }
 }
 
