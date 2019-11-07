@@ -10,6 +10,7 @@ module.exports = {
       name: {
         type: Sequelize.STRING,
         allowNull: false,
+        unique: true,
       },
       quantity: {
         type: Sequelize.INTEGER,
@@ -30,6 +31,10 @@ module.exports = {
       color: {
         type: Sequelize.STRING,
         allowNull: true,
+      },
+      status: {
+        type: Sequelize.STRING,
+        allowNull: false,
       },
       created_at: {
         type: Sequelize.DATE,

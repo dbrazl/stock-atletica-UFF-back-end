@@ -10,6 +10,7 @@ class Product extends Model {
         size: Sequelize.STRING,
         category: Sequelize.STRING,
         color: Sequelize.STRING,
+        status: Sequelize.STRING,
       },
       {
         sequelize,
