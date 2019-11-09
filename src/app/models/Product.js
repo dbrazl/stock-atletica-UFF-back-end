@@ -5,7 +5,8 @@ class Product extends Model {
     super.init(
       {
         name: Sequelize.STRING,
-        quantity: Sequelize.INTEGER,
+        quantity_stock: Sequelize.INTEGER,
+        quantity_reserved: Sequelize.INTEGER,
         unit_price: Sequelize.DOUBLE,
         size: Sequelize.STRING,
         category: Sequelize.STRING,
@@ -18,6 +19,10 @@ class Product extends Model {
     );
 
     return this;
+  }
+
+  static associate(models) {
+    this.belongsTo(models.File, { foreignKey: 'thumbnail_id' });
   }
 }
 

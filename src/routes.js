@@ -10,6 +10,8 @@ import UserController from './app/controllers/UserController';
 import SessionController from './app/controllers/SessionController';
 import RestoreController from './app/controllers/RestoreController';
 import AvatarController from './app/controllers/AvatarController';
+import ProductController from './app/controllers/ProductController';
+import ThumbnailController from './app/controllers/ThumbnailController';
 
 /**
  * Midlewarer
@@ -35,6 +37,16 @@ routes.use(AuthMiddleware);
 
 routes.put('/user', ValidateUserUpdate, UserController.update);
 routes.delete('/user', UserController.delete);
+
+// Validar essas rotas!!!
+routes.get('/products', ProductController.index);
+routes.post('/products', ProductController.store);
+routes.put('/products', ProductController.update);
+routes.post(
+  '/product/thumbnail:product_owner',
+  upload.single('file'),
+  ThumbnailController.store
+);
 
 routes.post('/avatar', upload.single('file'), AvatarController.store);
 routes.delete('/avatar/:path', AvatarController.delete);

@@ -1,4 +1,5 @@
 import Product from '../models/Product';
+import File from '../models/File';
 
 class ProductController {
   async store(req, res) {
@@ -6,7 +7,7 @@ class ProductController {
      * Verify if product exist on DB
      */
     const productExist = Product.findOne({ where: { name: req.body.name } });
-    if (productExist) {
+    if (!productExist) {
       return res.status(401).json({ error: 'Produto já foi cadastrado' });
     }
 
@@ -15,20 +16,22 @@ class ProductController {
      */
     const {
       name,
-      quantity,
+      quantity_stock,
+      quantity_reserved,
       unit_price,
       size,
       category,
       color,
       status,
-    } = Product.create(req.body);
+    } = await Product.create(req.body);
 
     /**
      * Return product
      */
     return res.status(200).json({
       name,
-      quantity,
+      quantity_stock,
+      quantity_reserved,
       unit_price,
       size,
       category,
@@ -52,7 +55,7 @@ class ProductController {
      * Verify if the new name is available
      */
     if (newName !== product.name) {
-      const productExist = await Product.findOne({ where: { newName } });
+      const productExist = await Product.findOne({ where: { name: newName } });
 
       if (productExist) {
         return res.status(401).json({ error: 'Produto já existe' });
@@ -63,26 +66,53 @@ class ProductController {
      * Update user in DB
      */
     const {
-      quantity,
+      quantity_stock,
+      quantity_reserved,
       unit_price,
       size,
       category,
       color,
       status,
-    } = await product.update(req.body);
+      thumbnail_id,
+    } = await product.update({ ...req.body, name: newName });
+
+    /**
+     * Find url of avatar if it files
+     */
+    const file = await File.findOne({ where: { id: thumbnail_id } });
+
+    const url = file && file.url;
 
     /**
      * Return product
      */
     return res.status(200).json({
-      name,
-      quantity,
+      newName,
+      quantity_stock,
+      quantity_reserved,
       unit_price,
       size,
       category,
       color,
       status,
+      productImage: {
+        thumbnail_id,
+        url,
+      },
     });
+  }
+
+  async index(req, res) {
+    const products = await Product.findAll();
+
+    /**
+     * Verify if exist product in DB
+     */
+    if (!products) {
+      res.status(404).json({ error: 'Não há produtos cadastrados' });
+    }
+
+    return res.status(200).json({ products });
   }
 }
 

@@ -12,7 +12,11 @@ module.exports = {
         allowNull: false,
         unique: true,
       },
-      quantity: {
+      quantity_stock: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
+      quantity_reserved: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
